@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "author": "Simon Lang <simon@tinybra.in>",
     "license": "MIT",
-    "main": "./dist/index.js",
+    "main": "./dist/psmatool.js",
     "bin": {
-        "psmatool": "./dist/index.js"
+        "psmatool": "./dist/psmatool.js"
     },
     "scripts": {
         "clean": "rimraf lib",

@@ -6,26 +6,14 @@ const command = new Command()
 
 // const program = require('commander');
 
-
 command
   .version('dev')
-  .description('Bang!')
+  .description('Tools for managing PSMA datasets')
 
 command
-  .command('showconfig')
-  .alias('c')
-  .description('Show the config')
-  .action(() => {
-    console.log('oooh!')
-  })
+  .command('util [name]', 'subcommand')
 
-let dummy: any = {};
-
-console.log(dummy.not_here);
-
-dummy.barry()
-
-if(!process.argv.slice(2).length/* || !/[arudl]/.test(process.argv.slice(2))*/) {
+if(!process.argv.slice(2).length) {
     command.outputHelp()
     process.exit()
 }
