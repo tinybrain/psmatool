@@ -1,8 +1,6 @@
 #!/usr/bin/env node --harmony
-// require('source-map-support').install();
-
-import { Command } from 'commander';
-import { showConfig } from './commands/util';
+import { Command } from 'commander'
+import * as util from './commands/util'
 
 const command = new Command()
 
@@ -16,7 +14,16 @@ command
   .description('Show the config')
   .action(opts => {
     (async () => {
-      await showConfig(opts)
+      await util.showConfig(opts)
+    })().catch(e => console.log(e.stack))
+  })
+
+command
+  .command('ensure-postgis')
+  .description('Show the config')
+  .action(opts => {
+    (async () => {
+      await util.ensurePostGIS(opts)
     })().catch(e => console.log(e.stack))
   })
 

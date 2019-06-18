@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "author": "Simon Lang <simon@tinybra.in>",
     "license": "MIT",
-    "main": "./dist/psmatool.js",
+    "main": "./src/index.js",
     "bin": {
         "psmatool": "./dist/psmatool.js"
     },
@@ -27,6 +27,7 @@
         "@types/commander": "^2.12.2",
         "@types/pg": "^7.4.14",
         "commander-ts": "^0.1.5",
+        "esm": "^3.2.25",
         "pg": "^7.11.0",
         "yaml": "^1.6.0"
     }

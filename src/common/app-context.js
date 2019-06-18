@@ -1,15 +1,11 @@
-import { Pool, Client } from 'pg'
+import { Pool } from 'pg'
 import * as path from 'path'
 import * as process from 'process'
 import * as fs from 'fs'
 
 export class AppContext {
 
-  config: any
-  pool: Pool
-  opts: any
-
-  constructor(opts: any) {
+  constructor(opts) {
     this.opts = opts
 
     const cfgPath = path.join(process.cwd(), 'config', 'psmatool-default.json');
@@ -20,9 +16,5 @@ export class AppContext {
 
   end() {
     this.pool.end()
-  }
-
-  client() {
-    return new Client(this.config.pg)
   }
 }

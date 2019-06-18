@@ -1,1 +1,1 @@
-alias psmatool='node -r ts-node/register src/psmatool.ts'
+alias psmatool="node -r esm $(pwd)/src/psmatool.js"

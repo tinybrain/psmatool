@@ -1,10 +1,7 @@
 #!/usr/bin/env node --harmony
-// require('source-map-support').install();
+import { Command } from 'commander'
 
-import { Command } from 'commander';
 const command = new Command()
-
-// const program = require('commander');
 
 command
   .version('dev')
