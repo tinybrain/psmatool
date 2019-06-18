@@ -55,23 +55,42 @@ export class ShpImport {
     }
   }
 
-  async test() {
-    // let pgc = await this.app.pool.connect()
-    // let res = await pgc.query()
-  }
-
   async create() {
     console.log('Create tables')
+
     let tasks = _
       .chain(this.files)
       .map(t => t[0])
       .map(t => _.assign(t, {mode: 'p'}))
       .value()
 
-    console.log(tasks.length)
+    console.log(`(${tasks.length} files)`)
 
     for (const dbf of tasks) {
-      await this.importShapfile(dbf)
+      console.log(`> ${dbf.mode}: ${dbf.table}`)
+      let sql = await this.importShapfile(dbf)
+      let res = await db.query(this.app, sql)
+    }
+  }
+
+  async load() {
+    console.log('Loading shapefiles')
+
+    let states = [..._.map(this.app.config.states, s => s.toLowerCase()), 'authority_code']
+    console.log(states)
+
+    let tasks = _
+      .chain(this.files)
+      .map(t => t)
+      .flatten()
+      .filter(t => states.includes(t.state.toLowerCase()))
+      .map(t => _.assign(t, {mode: 'a'}))
+      .value()
+
+    for (const dbf of tasks) {
+      console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
+      let sql = await this.importShapfile(dbf)
+      let res = await db.query(this.app, sql)
     }
   }
 
@@ -90,15 +109,7 @@ export class ShpImport {
     args += `"${dbf.path}" admin_bdys_raw.${dbf.table}`
     const argsv = args.match(/(".*?"|[^"\s]+)(?=\s*|\s*$)/g)
 
-    console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
-
     const sql = await spawnCmd('shp2pgsql', argsv, this.app.config.data.adminBdysPath)
-    // console.log(sql)
-
-    // console.log(this.app.pool)
-    // const pgc = await this.app.pool.connect()
-
-    const res = await db.query(sql)
-    pgc.release()
+    return sql
   }
 }

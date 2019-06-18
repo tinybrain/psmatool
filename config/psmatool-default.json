@@ -11,7 +11,14 @@
         "gnafPath": "/Users/sid/Development/Data/psma/MAY19_GNAF_PipeSeparatedValue_20190521155815/"
     },
     "states": [
+        "NSW",
+        "VIC",
+        "QLD",
+        "SA",
+        "WA",
+        "TAS",
         "NT",
-        "TAS"
+        "ACT",
+        "OT"
     ]
 }

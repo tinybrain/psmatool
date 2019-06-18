@@ -50,16 +50,20 @@ command
       // const app = new AppContext(opts)
 
       try {
+        // drop
+        await db.dropSchema(app, 'admin_bdys_raw')
+
         // create schema
         await db.createSchema(app, 'admin_bdys_raw')
 
         // create tables
         let shp = new ShpImport(app)
         await shp.collectFiles()
-
         await shp.create()
+        await shp.load()
+
       } catch (e) {
-        console.error(e)
+        throw e
       } finally {
         app.end()
       }
