@@ -1,5 +1,3 @@
-import { AppContext } from './app-context'
-
 export async function query(app, q) {
   const pgc = await app.pool.connect()
   let res

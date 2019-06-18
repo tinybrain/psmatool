@@ -1,9 +1,10 @@
 #!/usr/bin/env node --harmony
 
 import { AppContext } from './common/app-context'
-import { Command } from 'commander'
+import { Command } from 'commander';
 // import * as admin_bdys_raw from './commands/admin-bdys-raw'
-import * as db from './common/db'
+import * as db from './common/db';
+import { ShpImport } from './common/shp-import';
 
 const command = new Command()
 
@@ -36,6 +37,36 @@ command
       await db.createSchema(app, 'admin_bdys_raw')
       app.end()
     })().catch(e => console.log(e.stack))
+  })
+
+  command
+  .command('load')
+  .alias('l')
+  .description('Load boundaries from shapefiles')
+
+  .action(opts => {
+    (async () => {
+      const app = new AppContext(opts)
+      // const app = new AppContext(opts)
+
+      try {
+        // create schema
+        await db.createSchema(app, 'admin_bdys_raw')
+
+        // create tables
+        let shp = new ShpImport(app)
+        await shp.collectFiles()
+
+        await shp.create()
+      } catch (e) {
+        console.error(e)
+      } finally {
+        app.end()
+      }
+    })().catch(e => {
+      console.log(e.stack)
+      app.end()
+    })
   })
 
 if(!process.argv.slice(2).length) {

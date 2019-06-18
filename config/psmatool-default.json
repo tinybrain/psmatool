@@ -5,5 +5,13 @@
         "user": "postgres",
         "password": "password",
         "database": "psma_dev"
-    }
+    },
+    "data": {
+        "adminBdysPath": "/Users/sid/Development/Data/psma/MAY19_AdminBounds_ESRIShapefileorDBFfile_20190520202351",
+        "gnafPath": "/Users/sid/Development/Data/psma/MAY19_GNAF_PipeSeparatedValue_20190521155815/"
+    },
+    "states": [
+        "NT",
+        "TAS"
+    ]
 }
