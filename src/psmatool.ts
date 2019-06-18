@@ -11,7 +11,8 @@ command
   .description('Tools for managing PSMA datasets')
 
 command
-  .command('util [name]', 'subcommand')
+  .command('util [command]', 'subcommand')
+  .command('admin-bdys-raw [command]','subcommand')
 
 if(!process.argv.slice(2).length) {
     command.outputHelp()

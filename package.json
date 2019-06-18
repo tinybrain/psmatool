@@ -25,6 +25,9 @@
     },
     "dependencies": {
         "@types/commander": "^2.12.2",
-        "commander-ts": "^0.1.5"
+        "@types/pg": "^7.4.14",
+        "commander-ts": "^0.1.5",
+        "pg": "^7.11.0",
+        "yaml": "^1.6.0"
     }
 }
