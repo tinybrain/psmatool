@@ -1,8 +1,5 @@
-/* eslint-disable no-unused-vars */
-
 import * as path from 'path'
-import * as fs from 'fs'
-import * as _ from 'lodash'
+import _ from 'lodash';
 import asyncPool from 'tiny-async-pool'
 
 // eslint-disable-next-line no-undef
@@ -74,5 +71,5 @@ async function loadPsv(task) {
   let fullPath = path.join(task.app.config.data.gnafPath, task.path)
 
   let sql = `COPY gnaf_raw.${task.table} FROM '${fullPath}' DELIMITER '|' CSV HEADER;`
-  let res = await db.query(task.app, sql)
+  await db.query(task.app, sql)
 }

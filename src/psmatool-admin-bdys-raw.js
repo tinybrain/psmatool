@@ -74,11 +74,8 @@ command
     })
   })
 
-// eslint-disable-next-line no-undef
 if(!process.argv.slice(2).length) {
     command.outputHelp()
-    // eslint-disable-next-line no-undef
     process.exit()
 }
-// eslint-disable-next-line no-undef
 command.parse(process.argv)

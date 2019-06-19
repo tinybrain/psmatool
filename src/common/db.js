@@ -1,6 +1,6 @@
 import * as sqlutils from './sqlutils'
+import _ from 'lodash'
 import asyncPool from 'tiny-async-pool'
-import * as _ from 'lodash'
 
 export async function query(app, q) {
   const pgc = await app.pool.connect()
