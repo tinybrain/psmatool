@@ -15,10 +15,6 @@ export class ShpImport {
     this.app = app
   }
 
-  fullPath(p) {
-    return path.join(this.app.config.data.adminBdysPath, p)
-  }
-
   async collectFiles() {
 
     let globbed = await fg('**/*.dbf', { cwd: this.app.config.data.adminBdysPath })
@@ -38,7 +34,7 @@ export class ShpImport {
 
   makeDbfInfo(dbfPath) {
     let shpPath = dbfPath.replace(/.dbf$/, '.shp')
-    let shpPathFull = this.fullPath(shpPath)
+    let shpPathFull = path.join(this.cfg.app.config.data.adminBdysPath, shpPath)
     let format = fs.existsSync(shpPathFull) ? '.shp' : '.dbf'
     let rpath = format == '.shp' ? shpPath : dbfPath
     let basename = path.basename(rpath, format)
@@ -66,32 +62,32 @@ export class ShpImport {
 
     console.log(`(${tasks.length} files)`)
 
-    for (const dbf of tasks) {
+    tasks.forEach(dbf => {
       console.log(`> ${dbf.mode}: ${dbf.table}`)
       let sql = await this.importShapfile(dbf)
       let res = await db.query(this.app, sql)
-    }
+    })
   }
 
   async load() {
     console.log('Loading shapefiles')
 
-    let states = [..._.map(this.app.config.states, s => s.toLowerCase()), 'authority_code']
-    console.log(states)
+    let sf = this.app.statesFilter
+    console.log(sf)
 
     let tasks = _
       .chain(this.files)
       .map(t => t)
       .flatten()
-      .filter(t => states.includes(t.state.toLowerCase()))
+      .filter(t => sf.includes(t.state.toLowerCase()))
       .map(t => _.assign(t, {mode: 'a'}))
       .value()
 
-    for (const dbf of tasks) {
+    tasks.forEach(dbf => {
       console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
       let sql = await this.importShapfile(dbf)
       let res = await db.query(this.app, sql)
-    }
+    })
   }
 
   async importShapfile(dbf) {
