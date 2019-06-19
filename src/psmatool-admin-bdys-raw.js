@@ -61,8 +61,8 @@ command
           await shp.load()
 
         await db.executeSqlFile(app, 'admin_bdys_raw', 'fix_pkeys.sql', {split: 'comments'})
-        await db.executeSqlFile(app, 'admin_bdys_raw', 'add_fkeys.sql')
         await db.executeSqlFile(app, 'admin_bdys_raw', 'remove_strays.sql', {split: 'none'})
+        await db.executeSqlFile(app, 'admin_bdys_raw', 'add_fkeys.sql')
 
       } catch (e) {
         console.error(e)
