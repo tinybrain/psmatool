@@ -3,6 +3,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import * as _ from 'lodash'
+import asyncPool from 'tiny-async-pool'
 
 // eslint-disable-next-line no-undef
 const fg = require('fast-glob')
@@ -49,16 +50,29 @@ export class PsvImport {
     let tasks = _
       .chain(this.files)
       .filter(t => sf.includes(t.state.toLowerCase()))
+      .map(t => _.assign(t, { app: this.app }))
       .value()
 
-    for (const psv of tasks) {
-      if (this.app.opts.verbose)
-        console.log(`> ${psv.state.toLowerCase()}_${psv.table}`)
+    await asyncPool(10, tasks, await loadPsv)
 
-      let fullPath = path.join(this.app.config.data.gnafPath, psv.path)
+    // for (const psv of tasks) {
+    //   if (this.app.opts.verbose)
+    //     console.log(`> ${psv.state.toLowerCase()}_${psv.table}`)
 
-      let sql = `COPY gnaf_raw.${psv.table} FROM '${fullPath}' DELIMITER '|' CSV HEADER;`
-      let res = await db.query(this.app, sql)
-    }
+    //   let fullPath = path.join(this.app.config.data.gnafPath, psv.path)
+
+    //   let sql = `COPY gnaf_raw.${psv.table} FROM '${fullPath}' DELIMITER '|' CSV HEADER;`
+    //   let res = await db.query(this.app, sql)
+    // }
   }
+}
+
+async function loadPsv(task) {
+  if (task.app.opts.verbose)
+    console.log(`> ${task.state.toLowerCase()}_${task.table}`)
+
+  let fullPath = path.join(task.app.config.data.gnafPath, task.path)
+
+  let sql = `COPY gnaf_raw.${task.table} FROM '${fullPath}' DELIMITER '|' CSV HEADER;`
+  let res = await db.query(task.app, sql)
 }

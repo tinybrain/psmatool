@@ -1,4 +1,6 @@
 import * as sqlutils from './sqlutils'
+import asyncPool from 'tiny-async-pool'
+import * as _ from 'lodash'
 
 export async function query(app, q) {
   const pgc = await app.pool.connect()
@@ -50,9 +52,24 @@ export async function executeSqlFile(app, schema, filename,
       break;
   }
 
-  for (let query of queries) {
-    let dbc = await app.pool.connect()
-    await dbc.query(query)
-    await dbc.release()
-  }
+  let tasks = _.map(queries, q => {
+    return {
+      pool: app.pool,
+      query: q
+    }
+  })
+
+  await asyncPool(10, tasks, await poolQueryWorker)
+
+  // for (let query of queries) {
+  //   let dbc = await app.pool.connect()
+  //   await dbc.query(query)
+  //   await dbc.release()
+  // }
+}
+
+export async function poolQueryWorker(task) {
+  let dbc = await task.pool.connect()
+  await dbc.query(task.query)
+  await dbc.release()
 }
