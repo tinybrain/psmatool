@@ -29,12 +29,12 @@ export class PsvImport {
     let basename = path.basename(psfPath, '.psv')
 
     let re = /^(?<state>[A-Z]{2,3}|Authority_Code)_(?<table>[A-Za-z0-9_]*)_psv$/
-    let m = re.exec(basename)
+    let gp = _.mapValues(re.exec(basename).groups, v => v.toLowerCase())
 
     return {
       path: psfPath,
-      state: m.groups.state,
-      table: m.groups.table.toLowerCase()
+      state: gp.state,
+      table: gp.table
     }
   }
 

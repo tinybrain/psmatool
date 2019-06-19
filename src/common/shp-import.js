@@ -37,14 +37,14 @@ export class ShpImport {
     let basename = path.basename(rpath, format)
 
     let re = /^(?<state>[A-Z]{2,3}|Authority_Code)_(?<table>[A-Za-z0-9_]*)_shp$/
-    let m = re.exec(basename)
+    let gp = _.mapValues(re.exec(basename).groups, v => v.toLowerCase())
 
     return {
       format: format,
       path: rpath,
       basename: basename,
-      state: m.groups.state,
-      table: m.groups.table.toLowerCase()
+      state: gp.state,
+      table: gp.table
     }
   }
 
