@@ -10,14 +10,5 @@
         "adminBdysPath": "/Users/sid/Development/Data/psma/MAY19_AdminBounds_ESRIShapefileorDBFfile_20190520202351",
         "gnafPath": "/Users/sid/Development/Data/psma/MAY19_GNAF_PipeSeparatedValue_20190521155815/"
     },
-    "states": [
-        "NSW",
-        "VIC",
-        "QLD",
-        "SA",
-        "WA",
-        "TAS",
-        "NT",
-        "OT"
-    ]
+    "states": ["nsw", "vic", "qld", "sa", "wa", "tas", "nt","ot"]
 }

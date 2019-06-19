@@ -15,7 +15,7 @@ export class AppContext {
     this.config = JSON.parse(fs.readFileSync(cfgPath, 'utf8'))
 
     if (states && states.length > 0)
-      states = _.map(states, s => s.toLowerCase())
+      this.config.states = _.map(states, s => s.toLowerCase())
 
     this.statesFilter = [... this.config.states, 'authority_code']
 
