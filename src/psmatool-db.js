@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node -r esm
 import * as process from 'process'
 import { Command } from 'commander'
 
