@@ -7,10 +7,19 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "psmatool-admin-bdys-raw",
             "program": "${workspaceFolder}/src/psmatool-admin-bdys-raw.js",
             "args": ["load"],
             "runtimeArgs": ["-r", "esm"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "psmatool-gnaf-raw",
+            "program": "${workspaceFolder}/src/psmatool-gnaf-raw.js",
+            "args": ["load", "-v", "NT"],
+            "runtimeArgs": ["-r", "esm"]
         }
+
     ]
 }

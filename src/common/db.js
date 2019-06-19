@@ -51,8 +51,6 @@ export async function executeSqlFile(app, schema, filename,
   }
 
   for (let query of queries) {
-    // console.log('> query')
-    // console.log(query)
     let dbc = await app.pool.connect()
     await dbc.query(query)
     await dbc.release()

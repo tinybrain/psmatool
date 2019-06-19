@@ -11,6 +11,7 @@ command
 command
   .command('util [command]', 'Show info')
   .command('admin-bdys-raw [command]','Load PSMA admin boundaries')
+  .command('gnaf-raw [command]','Load PSMA G-NAF')
 
 if(!process.argv.slice(2).length) {
     command.outputHelp()

@@ -6,8 +6,6 @@ import * as process from 'process'
 export function readSqlFile(schema, filename) {
   let fp = path.join(process.cwd(), 'sql', schema, filename)
   let sql = fs.readFileSync(fp, 'utf8')
-  // console.log(sql)
-  //return result
   return sql
 }
 

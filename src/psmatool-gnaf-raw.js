@@ -4,23 +4,23 @@ import { Command } from 'commander'
 
 import * as db from './common/db'
 import { AppContext } from './common/app-context'
-import { ShpImport } from './common/shp-import'
+import { PsvImport } from './common/psv-import'
 
 const command = new Command()
 
 command
   .version('dev')
-  .description('Load PSMA admin boundaries')
+  .description('Load PSMA G-NAF')
 
 command
   .command('drop')
   .alias('d')
-  .description('Drop the admin_bdys_raw schema')
+  .description('Drop the gnaf_raw schema')
 
   .action(() => {
     (async () => {
       const app = new AppContext()
-      await db.dropSchema(app, 'admin_bdys_raw')
+      await db.dropSchema(app, 'gnaf_raw')
       app.end()
     })()
     .catch(e => console.error(e.stack))
@@ -29,12 +29,12 @@ command
 command
   .command('create')
   .alias('c')
-  .description('Create the admin_bdys_raw schema')
+  .description('Create the gnaf_raw schema')
 
   .action(opts => {
     (async () => {
       const app = new AppContext(opts)
-      await db.createSchema(app, 'admin_bdys_raw')
+      await db.createSchema(app, 'gnaf_raw')
       app.end()
     })().catch(e => console.log(e.stack))
   })
@@ -44,25 +44,26 @@ command
   .alias('l')
   .option('-s|--skip-import', 'Load the structure only')
   .option('-v|--verbose', 'Talk at length')
-  .description('Load boundaries from shapefiles')
+  .description('Load gnaf tables from psv distribution')
   .action((states, opts) => {
     (async () => {
       const app = new AppContext(opts, states)
 
       try {
-        await db.dropSchema(app, 'admin_bdys_raw')
-        await db.createSchema(app, 'admin_bdys_raw')
+        await db.dropSchema(app, 'gnaf_raw')
+        await db.createSchema(app, 'gnaf_raw')
 
-        const shp = new ShpImport(app)
-        await shp.collectFiles()
-        await shp.create()
+        await db.executeSqlFile(app, 'gnaf_raw', 'create_tables.sql', { split: 'none' })
 
-        if (!opts.skipImport)
-          await shp.load()
+        if (!opts.skipImport) {
+          const psv = new PsvImport(app)
+          await psv.collectFiles()
+          await psv.load()
+        }
 
-        await db.executeSqlFile(app, 'admin_bdys_raw', 'fix_pkeys.sql', {split: 'comments'})
-        await db.executeSqlFile(app, 'admin_bdys_raw', 'remove_strays.sql', {split: 'none'})
-        await db.executeSqlFile(app, 'admin_bdys_raw', 'add_fkeys.sql')
+        await db.executeSqlFile(app, 'gnaf_raw', 'add_indexes.sql')
+        await db.executeSqlFile(app, 'gnaf_raw', 'add_pkeys.sql')
+        await db.executeSqlFile(app, 'gnaf_raw', 'add_fkeys.sql')
 
       } catch (e) {
         console.error(e)
