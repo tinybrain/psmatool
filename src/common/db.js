@@ -2,6 +2,24 @@ import * as sqlutils from './sqlutils'
 import _ from 'lodash'
 import asyncPool from 'tiny-async-pool'
 
+export async function getVersions(app) {
+  const pgc = await app.pool.connect()
+  const pgisres = await pgc.query('SELECT PostGIS_full_version()')
+
+  let re = /(?<name>[A-Z]*)="(?<value>[^"]*)"/g
+  let m
+  let res = {}
+
+  while ((m = re.exec(pgisres.rows[0].postgis_full_version)) != null) {
+    let k = m.groups.name.toLowerCase()
+    let v = /^[^0-9]*(?<ver>[0-9.]+)*/g.exec(m.groups.value).groups.ver
+    res[k] = v
+  }
+
+  pgc.release()
+  return res
+}
+
 export async function query(app, q) {
   const pgc = await app.pool.connect()
   let res

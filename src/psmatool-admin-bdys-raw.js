@@ -9,7 +9,6 @@ import { ShpImport } from './common/shp-import'
 const command = new Command()
 
 command
-  .version('dev')
   .description('Load PSMA admin boundaries')
 
 command
@@ -39,10 +38,10 @@ command
     })().catch(e => console.log(e.stack))
   })
 
-  command
+command
   .command('load [states...]')
   .alias('l')
-  .option('-s|--skip-import', 'Load the structure only')
+  .option('-s|--skip-data', 'Load the structure only')
   .option('-v|--verbose', 'Talk at length')
   .description('Load boundaries from shapefiles')
   .action((states, opts) => {
@@ -57,11 +56,15 @@ command
         await shp.collectFiles()
         await shp.create()
 
-        if (!opts.skipImport)
+        if (!opts.skipData)
           await shp.load()
 
-        await db.executeSqlFile(app, 'admin_bdys_raw', 'fix_pkeys.sql', {split: 'comments'})
-        await db.executeSqlFile(app, 'admin_bdys_raw', 'remove_strays.sql', {split: 'none'})
+        await db.executeSqlFile(app, 'admin_bdys_raw', 'fix_pkeys.sql', {
+          split: 'comments'
+        })
+        await db.executeSqlFile(app, 'admin_bdys_raw', 'remove_strays.sql', {
+          split: 'none'
+        })
         await db.executeSqlFile(app, 'admin_bdys_raw', 'add_fkeys.sql')
 
       } catch (e) {
@@ -69,13 +72,11 @@ command
       } finally {
         app.end()
       }
-    })().catch(e => {
-      console.log(e.stack)
-    })
+    })().catch(e => console.log(e.stack))
   })
 
-if(!process.argv.slice(2).length) {
-    command.outputHelp()
-    process.exit()
+if (!process.argv.slice(2).length) {
+  command.outputHelp()
+  process.exit()
 }
 command.parse(process.argv)

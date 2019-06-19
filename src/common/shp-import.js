@@ -1,10 +1,8 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-
 import * as path from 'path'
 import * as fs from 'fs'
 import * as _ from 'lodash'
 
+// eslint-disable-next-line no-undef
 const fg = require('fast-glob')
 
 import { spawnCmd } from './cmd'
@@ -25,9 +23,7 @@ export class ShpImport {
       .reject(f => f.includes('Town Points') && f.endsWith('_LOCALITY_shp.dbf'))
       .map(f => this.makeDbfInfo(f))
       .groupBy('table')
-      .transform((r, v, k) => {
-        r[k] = k.endsWith('_aut') ? [v[0]] : v
-      }, {})
+      .transform((r, v, k) => { r[k] = k.endsWith('_aut') ? [v[0]] : v }, {})
       .value()
 
     return this.files
@@ -58,7 +54,7 @@ export class ShpImport {
     let tasks = _
       .chain(this.files)
       .map(t => t[0])
-      .map(t => _.assign(t, {mode: 'p'}))
+      .map(t => _.assign(t, { mode: 'p' }))
       .value()
 
     console.log(`(${tasks.length} files)`)
@@ -68,7 +64,7 @@ export class ShpImport {
         console.log(`> ${dbf.mode}: ${dbf.table}`)
 
       let sql = await this.importShapfile(dbf)
-      let res = await db.query(this.app, sql)
+      await db.query(this.app, sql)
     }
   }
 
@@ -83,7 +79,7 @@ export class ShpImport {
       .map(t => t)
       .flatten()
       .filter(t => sf.includes(t.state.toLowerCase()))
-      .map(t => _.assign(t, {mode: 'a'}))
+      .map(t => _.assign(t, { mode: 'a' }))
       .value()
 
     for (const dbf of tasks) {
@@ -91,7 +87,7 @@ export class ShpImport {
         console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
 
       let sql = await this.importShapfile(dbf)
-      let res = await db.query(this.app, sql)
+      await db.query(this.app, sql)
     }
   }
 
@@ -100,9 +96,8 @@ export class ShpImport {
 
     if (dbf.format === '.shp') {
       args += '-s 4328 '
-      if (dbf.mode === 'p') {
+      if (dbf.mode === 'p')
         args += '-I '
-      }
     } else {
       args += '-G -n '
     }
@@ -113,4 +108,4 @@ export class ShpImport {
     const sql = await spawnCmd('shp2pgsql', argsv, this.app.config.data.adminBdysPath)
     return sql
   }
-}
+  }

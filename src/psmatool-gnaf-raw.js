@@ -9,7 +9,6 @@ import { PsvImport } from './common/psv-import'
 const command = new Command()
 
 command
-  .version('dev')
   .description('Load PSMA G-NAF')
 
 command
@@ -39,10 +38,10 @@ command
     })().catch(e => console.log(e.stack))
   })
 
-  command
+command
   .command('load [states...]')
   .alias('l')
-  .option('-s|--skip-import', 'Load the structure only')
+  .option('-s|--skip-data', 'Load the structure only')
   .option('-v|--verbose', 'Talk at length')
   .description('Load gnaf tables from psv distribution')
   .action((states, opts) => {
@@ -53,9 +52,11 @@ command
         await db.dropSchema(app, 'gnaf_raw')
         await db.createSchema(app, 'gnaf_raw')
 
-        await db.executeSqlFile(app, 'gnaf_raw', 'create_tables.sql', { split: 'none' })
+        await db.executeSqlFile(app, 'gnaf_raw', 'create_tables.sql', {
+          split: 'none'
+        })
 
-        if (!opts.skipImport) {
+        if (!opts.skipData) {
           const psv = new PsvImport(app)
           await psv.collectFiles()
           await psv.load()
@@ -70,16 +71,11 @@ command
       } finally {
         app.end()
       }
-    })().catch(e => {
-      console.log(e.stack)
-    })
+    })().catch(e => console.log(e.stack))
   })
 
-// eslint-disable-next-line no-undef
-if(!process.argv.slice(2).length) {
-    command.outputHelp()
-    // eslint-disable-next-line no-undef
-    process.exit()
+if (!process.argv.slice(2).length) {
+  command.outputHelp()
+  process.exit()
 }
-// eslint-disable-next-line no-undef
 command.parse(process.argv)
