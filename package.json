@@ -5,7 +5,7 @@
     "license": "MIT",
     "main": "./src/index.js",
     "bin": {
-        "psmatool": "./dist/psmatool.js"
+        "psmatool": "./src/psmatool.js"
     },
     "scripts": {
         "clean": "rimraf lib",
@@ -29,7 +29,10 @@
         "commander-ts": "^0.1.5",
         "esm": "^3.2.25",
         "fast-glob": "^3.0.1",
+        "flora-sql-parser": "^0.9.3",
+        "js-sql-parser": "^1.0.7",
         "lodash": "^4.17.11",
+        "node-sql-parser": "^1.3.0",
         "pg": "^7.11.0",
         "yaml": "^1.6.0"
     }

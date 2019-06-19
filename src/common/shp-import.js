@@ -1,6 +1,7 @@
-// import * as fg from 'fast-glob'
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
 import * as path from 'path'
-import * as process from 'process'
 import * as fs from 'fs'
 import * as _ from 'lodash'
 
@@ -34,7 +35,7 @@ export class ShpImport {
 
   makeDbfInfo(dbfPath) {
     let shpPath = dbfPath.replace(/.dbf$/, '.shp')
-    let shpPathFull = path.join(this.cfg.app.config.data.adminBdysPath, shpPath)
+    let shpPathFull = path.join(this.app.config.data.adminBdysPath, shpPath)
     let format = fs.existsSync(shpPathFull) ? '.shp' : '.dbf'
     let rpath = format == '.shp' ? shpPath : dbfPath
     let basename = path.basename(rpath, format)
@@ -62,18 +63,20 @@ export class ShpImport {
 
     console.log(`(${tasks.length} files)`)
 
-    tasks.forEach(dbf => {
-      console.log(`> ${dbf.mode}: ${dbf.table}`)
+    for (const dbf of tasks) {
+      if (this.app.opts.verbose)
+        console.log(`> ${dbf.mode}: ${dbf.table}`)
+
       let sql = await this.importShapfile(dbf)
       let res = await db.query(this.app, sql)
-    })
+    }
   }
 
   async load() {
     console.log('Loading shapefiles')
 
     let sf = this.app.statesFilter
-    console.log(sf)
+    console.log(`states: ${sf.join(', ')}`)
 
     let tasks = _
       .chain(this.files)
@@ -83,11 +86,13 @@ export class ShpImport {
       .map(t => _.assign(t, {mode: 'a'}))
       .value()
 
-    tasks.forEach(dbf => {
-      console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
+    for (const dbf of tasks) {
+      if (this.app.opts.verbose)
+        console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
+
       let sql = await this.importShapfile(dbf)
       let res = await db.query(this.app, sql)
-    })
+    }
   }
 
   async importShapfile(dbf) {

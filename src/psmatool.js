@@ -1,5 +1,6 @@
 #!/usr/bin/env node --harmony
 import { Command } from 'commander'
+import * as process from 'process'
 
 const command = new Command()
 
@@ -8,8 +9,8 @@ command
   .description('Tools for managing PSMA datasets')
 
 command
-  .command('util [command]', 'subcommand')
-  .command('admin-bdys-raw [command]','subcommand')
+  .command('util [command]', 'Show info')
+  .command('admin-bdys-raw [command]','Load PSMA admin boundaries')
 
 if(!process.argv.slice(2).length) {
     command.outputHelp()

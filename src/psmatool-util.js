@@ -1,6 +1,7 @@
 #!/usr/bin/env node --harmony
 import { Command } from 'commander'
 import * as util from './commands/util'
+import * as process from 'process'
 
 const command = new Command()
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env node --harmony
+import * as process from 'process'
+import { Command } from 'commander'
 
+import * as db from './common/db'
 import { AppContext } from './common/app-context'
-import { Command } from 'commander';
-// import * as admin_bdys_raw from './commands/admin-bdys-raw'
-import * as db from './common/db';
-import { ShpImport } from './common/shp-import';
+import { ShpImport } from './common/shp-import'
 
 const command = new Command()
 
@@ -17,7 +17,7 @@ command
   .alias('d')
   .description('Drop the admin_bdys_raw schema')
 
-  .action(opts => {
+  .action(() => {
     (async () => {
       const app = new AppContext()
       await db.dropSchema(app, 'admin_bdys_raw')
@@ -40,14 +40,14 @@ command
   })
 
   command
-  .command('load')
+  .command('load [states...]')
   .alias('l')
+  .option('-s|--skip-import', 'Load the structure only')
+  .option('-v|--verbose', 'Talk at length')
   .description('Load boundaries from shapefiles')
-
-  .action(opts => {
+  .action((states, opts) => {
     (async () => {
-      const app = new AppContext(opts)
-      // const app = new AppContext(opts)
+      const app = new AppContext(opts, states)
 
       try {
         await db.dropSchema(app, 'admin_bdys_raw')
@@ -56,19 +56,29 @@ command
         const shp = new ShpImport(app)
         await shp.collectFiles()
         await shp.create()
-        await shp.load()
 
+        if (!opts.skipImport)
+          await shp.load()
+
+        await db.executeSqlFile(app, 'admin_bdys_raw', 'fix_pkeys.sql', {split: 'comments'})
+        await db.executeSqlFile(app, 'admin_bdys_raw', 'add_fkeys.sql')
+        await db.executeSqlFile(app, 'admin_bdys_raw', 'remove_strays.sql', {split: 'none'})
+
+      } catch (e) {
+        console.error(e)
       } finally {
         app.end()
       }
     })().catch(e => {
       console.log(e.stack)
-      app.end()
     })
   })
 
+// eslint-disable-next-line no-undef
 if(!process.argv.slice(2).length) {
     command.outputHelp()
+    // eslint-disable-next-line no-undef
     process.exit()
 }
+// eslint-disable-next-line no-undef
 command.parse(process.argv)
