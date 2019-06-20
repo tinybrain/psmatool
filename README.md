@@ -18,6 +18,20 @@ $ psmatool admin-bdys-raw
 $ psmatool gnaf-raw
 ```
 
+On Windows, Commander.js doesn't deal with subcommands shebangs thoroughly, so `npm link` installs separate bins in ```AppData\Roaming\npm```, i.e.:
+
+```console
+$ psmatool-admin-bdys-raw -h
+```
+
+To execute a command directly (i.e. debugging in vscode):
+
+```console
+$ node -r esm --no-warnings src/psmatool-gnaf-raw.js
+```
+
+## Config
+
 The config in `config/psmatool-default.yml` should be self explanatory. The tool doesn't create the db, so it needs to be created and configured.
 
 ```console
@@ -52,17 +66,6 @@ $ psmatool db versions
   libprotobuf: '1.2.1' }
 ```
 
-On Windows, Commander.js doesn't deal with subcommands shebangs thoroughly, so `npm link` installs separate bins in ```AppData\Roaming\npm```, i.e.:
-
-```console
-$ psmatool-admin-bdys-raw -h
-```
-
-To execute a command directly (i.e. debugging in vscode):
-
-```console
-$ node -r esm --no-warnings src/psmatool-gnaf-raw.js
-```
 
 ## Usage
 
