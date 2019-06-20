@@ -1,4 +1,4 @@
-#!/usr/bin/env node -r esm
+#!/usr/bin/env node -r esm --no-warnings
 import * as process from 'process'
 import { Command } from 'commander'
 
