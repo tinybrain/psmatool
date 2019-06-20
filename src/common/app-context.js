@@ -2,6 +2,7 @@ import * as path from 'path'
 import * as process from 'process'
 import * as fs from 'fs'
 import _ from 'lodash'
+import * as yaml from 'js-yaml'
 
 import { DbContext } from './db'
 
@@ -14,7 +15,7 @@ export class AppContext {
     this.appDir = path.resolve(__dirname, '../../')
 
     const cfgPath = path.join(this.appDir, 'config', 'psmatool-default.json')
-    this.config = JSON.parse(fs.readFileSync(cfgPath, 'utf8'))
+    this.config = yaml.safeLoad(fs.readFileSync(cfgPath, 'utf8'))
 
     if (process.platform == 'win32') {
       this.config.data = this.config.data_win
