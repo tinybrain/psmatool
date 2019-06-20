@@ -1,8 +1,9 @@
 {
     "name": "psmatool",
     "version": "1.0.0",
-    "author": "Simon Lang <simon@tinybra.in>",
-    "license": "MIT",
+    "author": "Simon Lang <simon.lang@mycommunitydirectory.com.au>",
+    "license": "UNLICENSED",
+    "private": true,
     "main": "./src/index.js",
     "bin": {
         "psmatool": "./src/psmatool.js",
