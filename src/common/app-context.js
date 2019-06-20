@@ -3,18 +3,18 @@ import * as process from 'process'
 import * as fs from 'fs'
 import _ from 'lodash'
 
-import { Pool } from 'pg'
+import { DbContext } from './db'
 
 export class AppContext {
 
   constructor(opts, states = null) {
     this.opts = opts
-    this.cwd = process.cwd()
 
-    const cfgPath = path.join(process.cwd(), 'config', 'psmatool-default.json')
+    // eslint-disable-next-line no-undef
+    this.appDir = path.resolve(__dirname, '../../')
+
+    const cfgPath = path.join(this.appDir, 'config', 'psmatool-default.json')
     this.config = JSON.parse(fs.readFileSync(cfgPath, 'utf8'))
-
-    console.log(process.platform)
 
     if (process.platform == 'win32') {
       this.config.data = this.config.data_win
@@ -26,10 +26,10 @@ export class AppContext {
 
     this.statesFilter = [... this.config.states, 'authority_code']
 
-    this.pool = new Pool(this.config.pg)
+    this.db = new DbContext(this)
   }
 
   end() {
-    this.pool.end()
+    this.db.pool.end()
   }
 }

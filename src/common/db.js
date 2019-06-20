@@ -1,89 +1,92 @@
 import * as sqlutils from './sqlutils'
 import _ from 'lodash'
 import asyncPool from 'tiny-async-pool'
+import { Pool } from 'pg'
 
-export async function getVersions(app) {
-  const pgc = await app.pool.connect()
-  const pgisres = await pgc.query('SELECT PostGIS_full_version()')
+export class DbContext {
 
-  let re = /(?<name>[A-Z]*)="(?<value>[^"]*)"/g
-  let m
-  let res = {}
-
-  while ((m = re.exec(pgisres.rows[0].postgis_full_version)) != null) {
-    let k = m.groups.name.toLowerCase()
-    let v = /^[^0-9]*(?<ver>[0-9.]+)*/g.exec(m.groups.value).groups.ver
-    res[k] = v
+  constructor(app) {
+    this.app = app
+    this.pool = new Pool(app.config.pg)
   }
 
-  pgc.release()
-  return res
-}
+  async getVersions() {
+    const pgc = await this.pool.connect()
+    const pgisres = await pgc.query('SELECT PostGIS_full_version()')
 
-export async function query(app, q) {
-  const pgc = await app.pool.connect()
-  let res
-  try {
-    res = await pgc.query(q)
-  } finally {
-    pgc.release()
-  }
-  return res
-}
+    let re = /(?<name>[A-Z]*)="(?<value>[^"]*)"/g
+    let m
+    let res = {}
 
-export async function dropSchema(app, schema) {
-  console.log(`Dropping schema ${schema}`)
-
-  const q = `DROP SCHEMA IF EXISTS ${schema} CASCADE`
-  return await query(app, q)
-}
-
-export async function createSchema(app, schema) {
-  console.log(`Creating schema ${schema}`)
-
-  const q = `CREATE SCHEMA IF NOT EXISTS ${schema}`
-  return await query(app, q)
-}
-
-export async function executeSqlFile(app, schema, filename,
-  options = {
-    split: 'statements'
-  }) {
-
-  console.log(`Executing sql/${schema}/${filename}, split: ${options.split}`)
-
-  let sql = sqlutils.readSqlFile(schema, filename)
-  let queries = []
-
-  switch (options.split) {
-    case 'statements':
-      queries = sqlutils.splitStatements(sql)
-      break;
-
-    case 'comments':
-      queries = sqlutils.splitComments(sql)
-      break;
-
-    case 'none':
-    default:
-      queries = [sql]
-      break;
-  }
-
-  let tasks = _.map(queries, q => {
-    return {
-      pool: app.pool,
-      query: q
+    while ((m = re.exec(pgisres.rows[0].postgis_full_version)) != null) {
+      let k = m.groups.name.toLowerCase()
+      let v = /^[^0-9]*(?<ver>[0-9.]+)*/g.exec(m.groups.value).groups.ver
+      res[k] = v
     }
-  })
 
-  await asyncPool(10, tasks, await poolQueryWorker)
+    pgc.release()
+    return res
+  }
 
-  // for (let query of queries) {
-  //   let dbc = await app.pool.connect()
-  //   await dbc.query(query)
-  //   await dbc.release()
-  // }
+  async query(q) {
+    const pgc = await this.pool.connect()
+    let res
+    try {
+      res = await pgc.query(q)
+    } finally {
+      pgc.release()
+    }
+    return res
+  }
+
+  async dropSchema(schema) {
+    console.log(`Dropping schema ${schema}`)
+
+    const q = `DROP SCHEMA IF EXISTS ${schema} CASCADE`
+    return await this.query(q)
+  }
+
+  async createSchema(schema) {
+    console.log(`Creating schema ${schema}`)
+
+    const q = `CREATE SCHEMA IF NOT EXISTS ${schema}`
+    return await this.query(q)
+  }
+
+  async executeSqlFile(schema, filename,
+    options = {
+      split: 'statements'
+    }) {
+
+    console.log(`Executing sql/${schema}/${filename}, split: ${options.split}`)
+
+    let sql = sqlutils.readSqlFile(this.app, schema, filename)
+    let queries = []
+
+    switch (options.split) {
+      case 'statements':
+        queries = sqlutils.splitStatements(sql)
+        break;
+
+      case 'comments':
+        queries = sqlutils.splitComments(sql)
+        break;
+
+      case 'none':
+      default:
+        queries = [sql]
+        break;
+    }
+
+    let tasks = _.map(queries, q => {
+      return {
+        pool: this.pool,
+        query: q
+      }
+    })
+
+    await asyncPool(10, tasks, await poolQueryWorker)
+  }
 }
 
 export async function poolQueryWorker(task) {

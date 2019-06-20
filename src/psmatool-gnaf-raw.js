@@ -2,7 +2,6 @@
 import * as process from 'process'
 import { Command } from 'commander'
 
-import * as db from './common/db'
 import { AppContext } from './common/app-context'
 import { PsvImport } from './common/psv-import'
 
@@ -16,10 +15,10 @@ command
   .alias('d')
   .description('Drop the gnaf_raw schema')
 
-  .action(() => {
+  .action(opts => {
     (async () => {
-      const app = new AppContext()
-      await db.dropSchema(app, 'gnaf_raw')
+      const app = new AppContext(opts)
+      await app.db.dropSchema('gnaf_raw')
       app.end()
     })()
     .catch(e => console.error(e.stack))
@@ -33,7 +32,7 @@ command
   .action(opts => {
     (async () => {
       const app = new AppContext(opts)
-      await db.createSchema(app, 'gnaf_raw')
+      await app.db.createSchema('gnaf_raw')
       app.end()
     })().catch(e => console.log(e.stack))
   })
@@ -49,12 +48,10 @@ command
       const app = new AppContext(opts, states)
 
       try {
-        await db.dropSchema(app, 'gnaf_raw')
-        await db.createSchema(app, 'gnaf_raw')
+        await app.db.dropSchema('gnaf_raw')
+        await app.db.createSchema('gnaf_raw')
 
-        await db.executeSqlFile(app, 'gnaf_raw', 'create_tables.sql', {
-          split: 'none'
-        })
+        await app.db.executeSqlFile('gnaf_raw', 'create_tables.sql', { split: 'none' })
 
         if (!opts.skipData) {
           const psv = new PsvImport(app)
@@ -62,9 +59,9 @@ command
           await psv.load()
         }
 
-        await db.executeSqlFile(app, 'gnaf_raw', 'add_indexes.sql')
-        await db.executeSqlFile(app, 'gnaf_raw', 'add_pkeys.sql')
-        await db.executeSqlFile(app, 'gnaf_raw', 'add_fkeys.sql')
+        await app.db.executeSqlFile('gnaf_raw', 'add_indexes.sql')
+        await app.db.executeSqlFile('gnaf_raw', 'add_pkeys.sql')
+        await app.db.executeSqlFile('gnaf_raw', 'add_fkeys.sql')
 
       } catch (e) {
         console.error(e)

@@ -1,10 +1,10 @@
-import * as _ from 'lodash'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as process from 'process'
+// import * as process from 'process'
+import _ from 'lodash';
 
-export function readSqlFile(schema, filename) {
-  let fp = path.join(process.cwd(), 'sql', schema, filename)
+export function readSqlFile(app, schema, filename) {
+  let fp = path.join(app.appDir, 'sql', schema, filename)
   let sql = fs.readFileSync(fp, 'utf8')
   return sql
 }

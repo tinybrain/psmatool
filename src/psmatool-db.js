@@ -3,7 +3,6 @@ import * as process from 'process'
 import { Command } from 'commander'
 
 import { AppContext } from './common/app-context';
-import * as db from './common/db'
 
 const command = new Command()
 
@@ -19,7 +18,7 @@ command
       const app = new AppContext(opts)
 
       try {
-        let pgv = await db.getVersions(app)
+        let pgv = await app.db.getVersions(app)
         console.log(pgv)
       } finally {
         app.end()
@@ -37,7 +36,7 @@ command
       try {
         console.log('Ensuring postgis')
         const query = 'CREATE EXTENSION IF NOT EXISTS postgis'
-        await db.query(app, query)
+        await app.db.query(query)
       } finally {
         app.end()
       }

@@ -1,22 +1,22 @@
 import * as path from 'path'
 import * as fs from 'fs'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 // eslint-disable-next-line no-undef
 const fg = require('fast-glob')
 
 import { spawnCmd } from './cmd'
-import * as db from './db'
 
 export class ShpImport {
 
   constructor(app) {
     this.app = app
+    this.adminBdysPath = this.app.config.data.adminBdysPath
   }
 
   async collectFiles() {
 
-    let globbed = await fg('**/*.dbf', { cwd: this.app.config.data.adminBdysPath })
+    let globbed = await fg('**/*.dbf', { cwd: this.adminBdysPath })
 
     this.files = _
       .chain(globbed)
@@ -31,7 +31,7 @@ export class ShpImport {
 
   makeDbfInfo(dbfPath) {
     let shpPath = dbfPath.replace(/.dbf$/, '.shp')
-    let shpPathFull = path.join(this.app.config.data.adminBdysPath, shpPath)
+    let shpPathFull = path.join(this.adminBdysPath, shpPath)
     let format = fs.existsSync(shpPathFull) ? '.shp' : '.dbf'
     let rpath = format == '.shp' ? shpPath : dbfPath
     let basename = path.basename(rpath, format)
@@ -64,7 +64,7 @@ export class ShpImport {
         console.log(`> ${dbf.mode}: ${dbf.table}`)
 
       let sql = await this.importShapfile(dbf)
-      await db.query(this.app, sql)
+      await this.app.db.query(sql)
     }
   }
 
@@ -87,7 +87,7 @@ export class ShpImport {
         console.log(`> ${dbf.mode}: ${dbf.state.toLowerCase()}_${dbf.table}`)
 
       let sql = await this.importShapfile(dbf)
-      await db.query(this.app, sql)
+      await this.app.db.query(sql)
     }
   }
 
@@ -105,7 +105,7 @@ export class ShpImport {
     args += `"${dbf.path}" admin_bdys_raw.${dbf.table}`
     const argsv = args.match(/(".*?"|[^"\s]+)(?=\s*|\s*$)/g)
 
-    const sql = await spawnCmd('shp2pgsql', argsv, this.app.config.data.adminBdysPath)
+    const sql = await spawnCmd('shp2pgsql', argsv, this.adminBdysPath)
     return sql
   }
-  }
+}
