@@ -14,7 +14,7 @@ export class AppContext {
     // eslint-disable-next-line no-undef
     this.appDir = path.resolve(__dirname, '../../')
 
-    const cfgPath = path.join(this.appDir, 'config', 'psmatool-default.json')
+    const cfgPath = path.join(this.appDir, 'config', 'psmatool-default.yml')
     this.config = yaml.safeLoad(fs.readFileSync(cfgPath, 'utf8'))
 
     if (process.platform == 'win32') {
