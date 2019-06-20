@@ -6,6 +6,10 @@
         "password": "password",
         "database": "psma_dev"
     },
+    "data_win": {
+        "adminBdysPath": "C:\\Data\\gnaf\\may19_adminbounds_esrishapefileordbffile_20190520202351",
+        "gnafPath": "C:\\Data\\gnaf\\may19_gnaf_pipeseparatedvalue_20190521155815"
+    },
     "data": {
         "adminBdysPath": "/Users/sid/Development/Data/psma/MAY19_AdminBounds_ESRIShapefileorDBFfile_20190520202351",
         "gnafPath": "/Users/sid/Development/Data/psma/MAY19_GNAF_PipeSeparatedValue_20190521155815/"

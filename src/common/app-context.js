@@ -14,6 +14,13 @@ export class AppContext {
     const cfgPath = path.join(process.cwd(), 'config', 'psmatool-default.json')
     this.config = JSON.parse(fs.readFileSync(cfgPath, 'utf8'))
 
+    console.log(process.platform)
+
+    if (process.platform == 'win32') {
+      this.config.data = this.config.data_win
+      delete this.config.data_win
+    }
+
     if (states && states.length > 0)
       this.config.states = _.map(states, s => s.toLowerCase())
 

@@ -5,7 +5,10 @@
     "license": "MIT",
     "main": "./src/index.js",
     "bin": {
-        "psmatool": "./src/psmatool.js"
+        "psmatool": "./src/psmatool.js",
+        "psmatool-db": "./src/psmatool-db.js",
+        "psmatool-admin-bdys-raw": "./src/psmatool-admin-bdys-raw.js",
+        "psmatool-gnaf-raw": "./src/psmatool-gnaf-raw.js"
     },
     "devDependencies": {
         "eslint": "^5.16.0",

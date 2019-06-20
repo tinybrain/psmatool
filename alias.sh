@@ -1,1 +1,1 @@
-alias psmatool="./src/psmatool.js"
+alias psmatool="node -r esm --no-warnings src/psmatool.js"
