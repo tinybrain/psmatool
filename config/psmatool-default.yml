@@ -3,7 +3,7 @@ pg:
   port: 5432
   user: postgres
   password: password
-  database: psma_dev
+  database: psma
 
 data_win:
   adminBdysPath: C:\Data\gnaf\may19_adminbounds_esrishapefileordbffile_20190520202351
