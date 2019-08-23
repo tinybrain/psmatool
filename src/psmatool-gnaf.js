@@ -36,6 +36,27 @@ command
     })().catch(e => console.log(e.stack))
   })
 
+command
+  .command('setup')
+  .alias('su')
+  .description('Setup tables and views')
+
+  .action(opts => {
+    (async () => {
+      const app = new AppContext(opts)
+
+      try {
+
+        await app.db.executeSqlFile('gnaf', 'create_json.sql', { split: 'none' })
+
+      } catch (e) {
+        console.error(e)
+      } finally {
+        app.end()
+      }
+    })().catch(e => console.log(e.stack))
+  })
+
 if (!process.argv.slice(2).length) {
   command.outputHelp()
   process.exit()

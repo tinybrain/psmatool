@@ -71,29 +71,6 @@ command
     })().catch(e => console.log(e.stack))
   })
 
-command
-  .command('install-views')
-  .alias('iv')
-  .description('Load gnaf views')
-
-  .action(opts => {
-    (async () => {
-      const app = new AppContext(opts)
-
-      try {
-
-        await app.db.executeSqlFile('gnaf_raw', 'view_state_json.sql', { split: 'none' })
-        await app.db.executeSqlFile('gnaf_raw', 'view_locality_json.sql', { split: 'none' })
-        await app.db.executeSqlFile('gnaf_raw', 'view_street_json.sql', { split: 'none' })
-
-      } catch (e) {
-        console.error(e)
-      } finally {
-        app.end()
-      }
-    })().catch(e => console.log(e.stack))
-  })
-
 if (!process.argv.slice(2).length) {
   command.outputHelp()
   process.exit()
