@@ -37,17 +37,27 @@ command
   })
 
 command
-  .command('setup')
-  .alias('su')
-  .description('Setup tables and views')
+  .command('build [stages...]')
+  .alias('b')
+  .description('Build views and temp tables')
 
-  .action(opts => {
+  .action((stages, opts) => {
     (async () => {
       const app = new AppContext(opts)
 
-      try {
+      let stages = [
+        'build_postcodes',
+        'create_json_views',
+        'build_temp',
+        'build_locality',
+        'build_street',
+        'build_address'
+      ]
 
-        await app.db.executeSqlFile('gnaf', 'create_json.sql', { split: 'none' })
+      try {
+        for (let i = 0;  i < stages.length; ++i) {
+          await app.db.executeSqlFile('gnaf', `${stages[i]}.sql`, { split: 'none' })
+        }
 
       } catch (e) {
         console.error(e)

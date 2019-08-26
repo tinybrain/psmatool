@@ -1,7 +1,9 @@
+import * as process from 'process'
 import * as sqlutils from './sqlutils'
 import _ from 'lodash'
 import asyncPool from 'tiny-async-pool'
 import { Pool } from 'pg'
+
 
 export class DbContext {
 
@@ -60,6 +62,8 @@ export class DbContext {
 
     console.log(`Executing sql/${schema}/${filename}, split: ${options.split}`)
 
+    let hrstart = process.hrtime()
+
     let sql = sqlutils.readSqlFile(this.app, schema, filename)
     let queries = []
 
@@ -86,6 +90,9 @@ export class DbContext {
     })
 
     await asyncPool(10, tasks, await poolQueryWorker)
+
+    let hrend = process.hrtime(hrstart)
+    console.info('>> completed in %ds %dms', hrend[0], Math.round(hrend[1] / 1000000))
   }
 }
 

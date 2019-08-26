@@ -33,14 +33,16 @@ select
             from gnaf_raw.locality_alias la
             join gnaf_raw.locality_alias_type_aut lat on la.alias_type_code = lat.code
             where la.locality_pid = l.locality_pid
-        )
+        ),
+        'postcodes', lpc.postcodes
     ) as locality_json,
     st_point(lcp.longitude, lcp.latitude) as geometry
 
 from
     gnaf_raw.locality l
         left outer join gnaf_raw.locality_class_aut lca on l.locality_class_code = lca.code
-        left outer join gnaf_raw.locality_point lcp on l.locality_pid = lcp.locality_pid;
+        left outer join gnaf_raw.locality_point lcp on l.locality_pid = lcp.locality_pid
+        left outer join gnaf.locality_postcode lpc on l.locality_pid = lpc.locality_pid;
 
 -- gnaf.street_json
 
@@ -68,14 +70,16 @@ select
             left outer join gnaf_raw.street_locality_alias_type_aut slat on sla.alias_type_code = slat.code
             left outer join gnaf_raw.street_suffix_aut ssa on ssa.code = sla.street_suffix_code
             where sla.street_locality_pid = sl.street_locality_pid
-        )
+        ),
+        'postcodes', spc.postcodes
     ) as street_locality_json,
     st_point(sp.longitude, sp.latitude) as geometry
 
 from
     gnaf_raw.street_locality sl
         left outer join gnaf_raw.street_suffix_aut ss on ss.code = sl.street_suffix_code
-        left outer join gnaf_raw.street_locality_point sp on sp.street_locality_pid = sl.street_locality_pid;
+        left outer join gnaf_raw.street_locality_point sp on sp.street_locality_pid = sl.street_locality_pid
+        left outer join gnaf.street_postcode spc on spc.street_locality_pid = sl.street_locality_pid;
 
 -- gnaf.address_json
 
@@ -83,7 +87,7 @@ drop view if exists gnaf.address_json cascade;
 
 create view gnaf.address_json as
 select
-    ad.address_detail_pid as pid,
+    ad.address_detail_pid,
     jsonb_build_object(
         'address_detail_pid', ad.address_detail_pid,
         'alias_principal', ad.alias_principal,
