@@ -18,6 +18,7 @@
         "rimraf": "^2.6.3"
     },
     "dependencies": {
+        "@elastic/elasticsearch": "^7.3.0",
         "commander": "^2.20.0",
         "esm": "^3.2.25",
         "fast-glob": "^3.0.1",

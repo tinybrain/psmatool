@@ -27,7 +27,7 @@ export class BatchQuery {
     }
 
     for await (const result of resultGenerator(pc, this.count)) {
-      if (cb) cb(result)
+      if (cb) await cb(result)
     }
 
     cursor.close(() => {
