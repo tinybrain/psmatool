@@ -3,10 +3,6 @@ import * as process from 'process'
 import { Command } from 'commander'
 import { BatchQuery } from './common/batch-query'
 
-import { promisify } from 'util'
-
-const Cursor = require('pg-cursor')
-
 import { AppContext } from './common/app-context'
 
 const command = new Command()
