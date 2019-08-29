@@ -1,6 +1,7 @@
 #!/usr/bin/env node -r esm --no-warnings
 import * as process from 'process'
 import { Command } from 'commander'
+import { BatchQuery } from './common/batch-query'
 
 import { promisify } from 'util'
 
@@ -21,35 +22,8 @@ command
     (async () => {
       const app = new AppContext(opts)
 
-      console.info('bang!')
-
-      const client = await app.db.pool.connect()
-      const cursor = client.query(new Cursor('select * from gnaf.address'))
-      const pc = promisify(cursor.read.bind(cursor))
-
-      let total = 0;
-
-      async function* resultGenerator(pcr) {
-        const count = 1000
-        while (true) {
-          const result = await pcr(count)
-
-          if (result.length > 0) {
-            yield result
-          } else {
-            return
-          }
-        }
-      }
-
-      for await (const result of resultGenerator(pc)) {
-        total += result.length
-        console.log(total)
-      }
-
-      cursor.close(() => {
-        client.end()
-      })
+      const bq = new BatchQuery(app, 'select * from gnaf.address')
+      bq.batch()
 
       app.end()
       console.info('end!')
