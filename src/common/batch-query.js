@@ -15,6 +15,18 @@ export class BatchQuery {
     const pc = promisify(cursor.read.bind(cursor))
     let total = 0;
 
+    async function* resultGenerator(pcr, count) {
+      while (true) {
+        const result = await pcr(count)
+
+        if (result.length > 0) {
+          yield result
+        } else {
+          return
+        }
+      }
+    }
+
     for await (const result of resultGenerator(pc, this.count)) {
       total += result.length
       console.log(total)
@@ -26,14 +38,4 @@ export class BatchQuery {
   }
 }
 
-async function* resultGenerator(pcr, count) {
-  while (true) {
-    const result = await pcr(count)
 
-    if (result.length > 0) {
-      yield result
-    } else {
-      return
-    }
-  }
-}
