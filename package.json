@@ -7,6 +7,7 @@
     "main": "./src/index.js",
     "bin": {
         "psmatool": "./src/psmatool.js",
+        "psmatool-scratch": "./src/psmatool-scratch.js",
         "psmatool-db": "./src/psmatool-db.js",
         "psmatool-admin-bdys-raw": "./src/psmatool-admin-bdys-raw.js",
         "psmatool-gnaf-raw": "./src/psmatool-gnaf-raw.js",
@@ -23,6 +24,8 @@
         "js-yaml": "^3.13.1",
         "lodash": "^4.17.11",
         "pg": "^7.11.0",
+        "pg-cursor": "^2.0.0",
+        "pg-query-stream": "^2.0.0",
         "tiny-async-pool": "^1.0.4"
     }
 }
