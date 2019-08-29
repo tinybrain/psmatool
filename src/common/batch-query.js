@@ -9,11 +9,10 @@ export class BatchQuery {
     this.count = count
   }
 
-  async batch() {
+  async batch(cb) {
     const client = await this.app.db.pool.connect()
     const cursor = client.query(new Cursor(this.query))
     const pc = promisify(cursor.read.bind(cursor))
-    let total = 0;
 
     async function* resultGenerator(pcr, count) {
       while (true) {
@@ -28,8 +27,7 @@ export class BatchQuery {
     }
 
     for await (const result of resultGenerator(pc, this.count)) {
-      total += result.length
-      console.log(total)
+      if (cb) cb(result)
     }
 
     cursor.close(() => {

@@ -17,9 +17,14 @@ command
   .action(opts => {
     (async () => {
       const app = new AppContext(opts)
-
       const bq = new BatchQuery(app, 'select * from gnaf.address')
-      bq.batch()
+
+      let total = 0
+
+      bq.batch((rows) => {
+        total+= rows.length
+        console.info(total)
+      })
 
       app.end()
       console.info('end!')
