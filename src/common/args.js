@@ -8,7 +8,7 @@ export function checkArgs(defaults, args) {
   let diff = _.difference(args, defaults)
 
   if (diff.length > 0) {
-    throw new Error(`Invalid arguments: ${diff.join(', ')} (Defaults: ${defaults.join(',')})`)
+    throw new Error(`Invalid arguments: ${diff.join(', ')} (Defaults: ${defaults.join(', ')})`)
   }
 
   return args

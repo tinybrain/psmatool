@@ -14,7 +14,7 @@ export class DbContext {
 
   async getVersions() {
     const pgc = await this.pool.connect()
-    const pgisres = await pgc.query('SELECT PostGIS_full_version()')
+    const pgisres = await pgc.query('select postgis_full_version()')
 
     let re = /(?<name>[A-Z]*)="(?<value>[^"]*)"/g
     let m
@@ -44,14 +44,14 @@ export class DbContext {
   async dropSchema(schema) {
     console.log(`Dropping schema ${schema}`)
 
-    const q = `DROP SCHEMA IF EXISTS ${schema} CASCADE`
+    const q = `drop schema if exists ${schema} cascade`
     return await this.query(q)
   }
 
   async createSchema(schema) {
     console.log(`Creating schema ${schema}`)
 
-    const q = `CREATE SCHEMA IF NOT EXISTS ${schema}`
+    const q = `create schema if not exists ${schema}`
     return await this.query(q)
   }
 
