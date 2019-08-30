@@ -8,7 +8,7 @@ create table gnaf.locality
     type varchar(15) not null,
     locality jsonb not null,
     state jsonb not null,
-    geometry geometry
+    geometry jsonb
 );
 
 alter table only gnaf.locality owner to postgres;
@@ -22,5 +22,5 @@ select
     lt.geometry as geometry
 from
     gnaf_raw.locality l
-    join gnaf.locality_temp lt on lt.locality_pid = l.locality_pid
-    join gnaf.state_temp st on st.state_pid = l.state_pid;
+        join gnaf.locality_temp lt on lt.locality_pid = l.locality_pid
+        join gnaf.state_temp st on st.state_pid = l.state_pid;

@@ -36,7 +36,7 @@ select
         ),
         'postcodes', lpc.postcodes
     ) as locality_json,
-    st_point(lcp.longitude, lcp.latitude) as geometry
+    st_asgeojson(st_point(lcp.longitude, lcp.latitude))::jsonb as geometry
 
 from
     gnaf_raw.locality l
@@ -73,7 +73,7 @@ select
         ),
         'postcodes', spc.postcodes
     ) as street_locality_json,
-    st_point(sp.longitude, sp.latitude) as geometry
+    st_asgeojson(st_point(sp.longitude, sp.latitude))::jsonb as geometry
 
 from
     gnaf_raw.street_locality sl
@@ -121,7 +121,7 @@ select
         'legal_parcel_id', ad.legal_parcel_id
     ) as address_detail_json,
     ad.postcode as postcode,
-    st_point(ag.longitude, ag.latitude) as geometry
+    st_asgeojson(st_point(ag.longitude, ag.latitude))::jsonb as geometry
 
 from
     gnaf_raw.address_detail ad

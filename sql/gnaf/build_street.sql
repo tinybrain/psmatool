@@ -9,7 +9,7 @@ create table gnaf.street
     street jsonb not null,
     locality jsonb not null,
     state jsonb not null,
-    geometry geometry
+    geometry jsonb
 );
 
 alter table only gnaf.street owner to postgres;

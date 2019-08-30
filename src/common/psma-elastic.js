@@ -1,4 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
+import _ from 'lodash'
 
 export class PsmaElastic {
 
@@ -19,37 +20,23 @@ export class PsmaElastic {
     })
   }
 
-  async index(row) {
-    // await this.client.bulk({
-    //   index: 'gnaf',
-    //   body: docs
-    // })
+  async indexGnafRows(rows) {
 
-    console.info(`index > ${row.id}`)
+    let commands = _
+      .chain(rows)
+      .map(r => [{ index: {_index: 'gnaf', _id: r.id } }, r])
+      .flatten()
+      .value()
 
-    await this.client.create({
-      id: row.id,
-      index: 'gnaf',
-      body: row
+    let res = await this.client.bulk({
+      body: commands
     })
-  }
 
-  async indexRows(rows) {
+    if (res.statusCode != 200) {
+      console.error(res)
+      throw new Error('Bulk index failed')
+    }
 
-    console.info(rows.length)
-
-    console.info(rows)
-
-    let batch = rows.reduce((p, v) => {
-      p.push({'_id': v.id})
-      p.push(v)
-    }, [])
-
-    console.info(batch)
-
-    // await this.client.bulk({
-
-    // })
-
+    return res
   }
 }

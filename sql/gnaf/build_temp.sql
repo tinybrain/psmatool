@@ -22,7 +22,7 @@ create table gnaf.locality_temp
 (
     locality_pid varchar(15) not null,
     locality_json jsonb not null,
-    geometry geometry
+    geometry jsonb
 );
 
 alter table only gnaf.locality_temp owner to postgres;
@@ -39,7 +39,7 @@ create table gnaf.street_temp
 (
     street_locality_pid varchar(15) not null,
     street_locality_json jsonb not null,
-    geometry geometry
+    geometry jsonb
 );
 
 alter table only gnaf.street_temp owner to postgres;
@@ -57,7 +57,7 @@ create table gnaf.address_temp
     address_detail_pid varchar(15) not null,
     address_detail_json jsonb not null,
     poastcode varchar(4),
-    geometry geometry
+    geometry jsonb
 );
 
 alter table only gnaf.address_temp owner to postgres;

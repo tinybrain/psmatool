@@ -64,23 +64,15 @@ command
 
       const pe = new PsmaElastic()
 
-      const bq = new BatchQuery(app, 'select * from gnaf.street')
+      const bq = new BatchQuery(app, 'select * from gnaf.locality')
 
       let total = 0
 
       bq.batch(async rows => {
+        await pe.indexGnafRows(rows)
+
         total += rows.length
         console.info(total)
-
-        // await timeout(1000)
-
-        await pe.indexRows(rows)
-
-        // console.info('!')
-
-          // let res = await pe.bulk(rows)
-
-        // console.info(res)
       })
 
       app.end()
