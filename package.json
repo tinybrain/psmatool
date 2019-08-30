@@ -7,11 +7,11 @@
     "main": "./src/index.js",
     "bin": {
         "psmatool": "./src/psmatool.js",
-        "psmatool-scratch": "./src/psmatool-scratch.js",
         "psmatool-db": "./src/psmatool-db.js",
         "psmatool-admin-bdys-raw": "./src/psmatool-admin-bdys-raw.js",
         "psmatool-gnaf-raw": "./src/psmatool-gnaf-raw.js",
-        "psmatool-gnaf": "./src/psmatool-gnaf.js"
+        "psmatool-gnaf": "./src/psmatool-gnaf.js",
+        "psmatool-elastic": "./src/psmatool-elastic.js"
     },
     "devDependencies": {
         "eslint": "^5.16.0",

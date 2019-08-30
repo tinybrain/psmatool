@@ -8,6 +8,13 @@ export class PsmaElastic {
     this.client = new Client({ node: 'http://localhost:9200' })
   }
 
+  checkResponse(res, err) {
+    if (res.statusCode != 200) {
+      console.error(res)
+      throw new Error(err)
+    }
+  }
+
   async init() {
     console.info('Deleting gnaf index')
     await this.client.indices.delete({
@@ -18,6 +25,26 @@ export class PsmaElastic {
     await this.client.indices.create({
       index: 'gnaf'
     })
+  }
+
+  async deleteGnafByType(type) {
+    console.info(`Deleting ${type}`)
+    let res = await this.client.deleteByQuery({
+      index: 'gnaf',
+      body: {
+        query: {
+          match: {
+            type: type
+          }
+        }
+      }
+    })
+
+    this.checkResponse(res, 'Delete gnaf by type error')
+
+    console.info(`> ${res.body.deleted} deleted`)
+
+    return res
   }
 
   async indexGnafRows(rows) {
@@ -32,11 +59,7 @@ export class PsmaElastic {
       body: commands
     })
 
-    if (res.statusCode != 200) {
-      console.error(res)
-      throw new Error('Bulk index failed')
-    }
-
+    this.checkResponse(res, 'Bulk index')
     return res
   }
 }
