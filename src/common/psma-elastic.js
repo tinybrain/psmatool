@@ -1,5 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import _ from 'lodash'
+import * as ef from './elastic-formatter'
 
 export class PsmaElastic {
 
@@ -51,6 +52,7 @@ export class PsmaElastic {
 
     let commands = _
       .chain(rows)
+      .map(r => ef.formatGnaf(r))
       .map(r => [{ index: {_index: 'gnaf', _id: r.id } }, r])
       .flatten()
       .value()

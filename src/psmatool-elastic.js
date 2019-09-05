@@ -70,7 +70,8 @@ command
 
       try {
         const pe = new PsmaElastic()
-        types = ArgUtils.checkArgs(['locality', 'street', 'address'], types)
+        // types = ArgUtils.checkArgs(['locality', 'street', 'address'], types)
+        types = ArgUtils.checkArgs(['address'], types)
 
         for (let type of types) {
 

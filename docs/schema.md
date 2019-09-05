@@ -2,6 +2,7 @@ id
 type
 
 components
+
     building
 
     lot
