@@ -46,12 +46,8 @@ command
       const app = new AppContext(opts)
 
       let stages = [
-        'build_postcodes',
-        'create_json_views',
-        'build_temp',
-        'build_locality',
-        'build_street',
-        'build_address'
+        // 'build_postcodes',
+        'create_json_views'
       ]
 
       try {
